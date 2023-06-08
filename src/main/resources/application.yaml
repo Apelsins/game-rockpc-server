@@ -1,0 +1,14 @@
+server:
+  port : 8082
+
+connection:
+  ip: localhost
+  port: 27960
+
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3388/db1?createDatabaseIfNotExist=true&autoReconnect=true&useSSL=false&allowPublicKeyRetrieval=true
+    username: usr
+    password: pass
+    platform: mysql
+    initialization-mode: always

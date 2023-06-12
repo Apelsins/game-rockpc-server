@@ -10,7 +10,7 @@ public class ClientFactory {
 
     private final ApplicationContext applicationContext;
 
-    public synchronized ClientInstance createClientInstance() {
-        return applicationContext.getBean(ClientInstance.class);
+    public synchronized ClientSession createSession() {
+        return applicationContext.getBean(ClientSession.class);
     }
 }

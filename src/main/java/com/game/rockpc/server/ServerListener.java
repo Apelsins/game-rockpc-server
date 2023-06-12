@@ -2,12 +2,18 @@ package com.game.rockpc.server;
 
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
-import com.game.rockpc.domain.service.UserService;
+import com.game.rockpc.domain.service.AuthService;
+import com.game.rockpc.domain.service.GameService;
+import com.game.rockpc.domain.service.SessionService;
 import com.game.rockpc.dto.CommandType;
+import com.game.rockpc.dto.GameCommandDto;
+import com.game.rockpc.dto.InitSessionCommandDto;
 import com.game.rockpc.dto.RegistrationCommandDto;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+
+import java.util.UUID;
 
 
 @Slf4j
@@ -15,26 +21,34 @@ import org.springframework.stereotype.Component;
 @AllArgsConstructor
 public class ServerListener extends Listener {
 
-    private final UserService userService;
+    private final AuthService authService;
+    private final SessionService sessionService;
+    private final GameService gameService;
 
     @Override
     public void connected(final Connection c) {
         log.info("На сервер подключился '{}'", c.getRemoteAddressTCP().getHostString());
     }
 
-    //Используется когда клиент отправляет пакет серверу
     @Override
     public void received(final Connection c, final Object incomeObj) {
         if (incomeObj instanceof final RegistrationCommandDto regCommand) {
             if (regCommand.getCommandType() == CommandType.SIGN_UP) {
-                userService.signUpNewUser(regCommand);
+                authService.signUpNewUser(regCommand);
             } else if (regCommand.getCommandType() == CommandType.SIGN_IN) {
-                userService.signInNewUser(regCommand);
+                authService.signInNewUser(regCommand);
             }
+        }
+
+        if (incomeObj instanceof final InitSessionCommandDto initCommand) {
+            sessionService.initSession(UUID.fromString(initCommand.getSessionId()));
+        }
+
+        if (incomeObj instanceof final GameCommandDto gameCommandDto) {
+            gameService.play(gameCommandDto);
         }
     }
 
-    //Используется когда клиент покидает сервер.
     @Override
     public void disconnected(final Connection c) {
         log.info("Клиент покинул сервер!");

@@ -1,6 +1,7 @@
 package com.game.rockpc.repository;
 
 
+import com.game.rockpc.domain.entity.GameHistory;
 import com.game.rockpc.domain.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -13,17 +14,6 @@ import javax.transaction.Transactional;
 import java.util.Optional;
 
 @Repository
-public interface UserRepository extends JpaRepository<User, Long> {
+public interface GameHistoryRepository extends JpaRepository<GameHistory, Long> {
 
-    Optional<User> findByLoginAndPassword(@NonNull String login, @NonNull String password);
-    Optional<User> findByLogin(@NonNull String login);
-
-    @Transactional
-    @Modifying
-    @Query(value = """
-            UPDATE users
-             SET last_auth_timestamp=NOW()
-             WHERE id = :id
-            """, nativeQuery = true)
-    void updateLastAuthTimestamp(@Param(value = "id") long id);
 }
